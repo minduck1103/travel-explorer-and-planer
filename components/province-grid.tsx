@@ -4,12 +4,18 @@ import { useState } from "react"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { provinces } from "@/lib/data"
+import { provinces, attractions } from "@/lib/data"
 
 export function ProvinceGrid() {
   const [searchQuery, setSearchQuery] = useState("")
 
-  const filteredProvinces = provinces.filter((province) =>
+  // Tính toán số lượng địa điểm thực tế cho mỗi tỉnh
+  const provincesWithActualCount = provinces.map(province => {
+    const actualCount = attractions.filter(attraction => attraction.provinceId === province.id).length
+    return { ...province, attractionCount: actualCount }
+  })
+
+  const filteredProvinces = provincesWithActualCount.filter((province) =>
     province.name.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 

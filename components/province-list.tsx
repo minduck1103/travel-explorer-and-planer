@@ -5,13 +5,19 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { provinces } from "@/lib/data"
+import { provinces, attractions } from "@/lib/data"
 
 export function ProvinceList() {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("name-asc")
 
-  const filteredProvinces = provinces.filter((province) =>
+  // Tính toán số lượng địa điểm thực tế cho mỗi tỉnh
+  const provincesWithActualCount = provinces.map(province => {
+    const actualCount = attractions.filter(attraction => attraction.provinceId === province.id).length
+    return { ...province, attractionCount: actualCount }
+  })
+
+  const filteredProvinces = provincesWithActualCount.filter((province) =>
     province.name.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 

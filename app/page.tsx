@@ -13,8 +13,8 @@ export default function Home() {
         <ProvinceGrid />
       </section>
       <AboutSection />
-      <FeaturesSection />
       <NatureGallery />
+      <FeaturesSection />
     </div>
   )
 }

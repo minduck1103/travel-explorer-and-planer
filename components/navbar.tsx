@@ -13,7 +13,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { cn } from "@/lib/utils"
-import { Menu, X, Bot } from "lucide-react"
+import { Menu, X, Bot, User } from "lucide-react"
 import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -94,14 +94,11 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="hidden md:flex gap-2">
-              <Button asChild variant="outline">
-                <Link href="/login">Đăng nhập</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/register">Đăng ký</Link>
-              </Button>
-            </div>
+            <Button variant="ghost" size="icon" className="h-9 w-9" asChild>
+              <Link href="/login">
+                <User className="h-5 w-5" />
+              </Link>
+            </Button>
           )}
 
           <Button variant="ghost" className="md:hidden" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -128,17 +125,6 @@ export default function Navbar() {
                 {route.label}
               </Link>
             ))}
-
-            {!user && (
-              <div className="flex flex-col gap-2 mt-2">
-                <Button asChild variant="outline">
-                  <Link href="/login">Đăng nhập</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/register">Đăng ký</Link>
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       )}

@@ -87,16 +87,20 @@ export default function LoginPage() {
               />
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col">
+          <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
             </Button>
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              Chưa có tài khoản?{" "}
-              <Link href="/register" className="text-primary hover:underline">
-                Đăng ký
-              </Link>
-            </p>
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground inline-flex items-center gap-2">
+                Chưa có tài khoản?
+                <Button variant="link" className="h-auto p-0" asChild>
+                  <Link href="/register" className="font-semibold text-primary hover:underline">
+                    Đăng ký ngay
+                  </Link>
+                </Button>
+              </p>
+            </div>
           </CardFooter>
         </form>
       </Card>

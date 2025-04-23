@@ -66,16 +66,16 @@ export async function POST(request: NextRequest) {
         history: [
           {
             role: "user",
-            parts: "Hãy xác nhận vai trò của bạn",
+            parts: [{ text: "Hãy xác nhận vai trò của bạn" }],
           },
           {
             role: "model",
-            parts: systemPrompt,
+            parts: [{ text: systemPrompt }],
           },
-          ...chatHistory?.map((msg: any) => ({
+          ...(chatHistory?.map((msg: any) => ({
             role: msg.isUser ? "user" : "model",
-            parts: msg.content,
-          })) || [],
+            parts: [{ text: msg.content }],
+          })) || []),
         ],
         generationConfig: {
           maxOutputTokens: 1000,
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      const result = await chat.sendMessage(message)
+      const result = await chat.sendMessage([{ text: message }])
       const response = await result.response
       
       console.log("Nhận được phản hồi từ Gemini")

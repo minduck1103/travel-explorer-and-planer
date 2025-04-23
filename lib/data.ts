@@ -372,6 +372,170 @@ export const attractions = [
     ticketPrice: "40.000 VNĐ",
     rating: 4.5,
     coordinates: { lat: 11.9404, lng: 108.4373 },
+  },
+
+  // Thêm địa điểm cho Hà Nội
+  {
+    id: 31,
+    provinceId: 1,
+    name: "Phố đi bộ Hồ Gươm",
+    slug: "pho-di-bo-ho-guom",
+    imageUrl: "/images/attractions/pho-di-bo-ho-guom.jpg",
+    description: "Không gian văn hóa, giải trí sôi động vào cuối tuần với nhiều hoạt động nghệ thuật đường phố.",
+    address: "Phố Đinh Tiên Hoàng, Hoàn Kiếm, Hà Nội",
+    openingHours: "19:00 - 24:00 (T6-CN)",
+    ticketPrice: "Miễn phí",
+    rating: 4.6,
+    coordinates: { lat: 21.0286, lng: 105.8525 }
+  },
+  {
+    id: 32,
+    provinceId: 1,
+    name: "Phố cổ 36 phố phường",
+    slug: "pho-co-36-pho-phuong",
+    imageUrl: "/images/attractions/pho-co-ha-noi.jpg",
+    description: "Khu phố cổ với kiến trúc đặc trưng và nhiều cửa hàng truyền thống.",
+    address: "Quận Hoàn Kiếm, Hà Nội",
+    openingHours: "Cả ngày",
+    ticketPrice: "Miễn phí",
+    rating: 4.7,
+    coordinates: { lat: 21.0338, lng: 105.8500 }
+  },
+  {
+    id: 33,
+    provinceId: 1,
+    name: "Văn Miếu - Quốc Tử Giám",
+    slug: "van-mieu-quoc-tu-giam",
+    imageUrl: "/images/attractions/van-mieu.jpg",
+    description: "Trường đại học đầu tiên của Việt Nam, di tích lịch sử văn hóa quan trọng.",
+    address: "58 Quốc Tử Giám, Đống Đa, Hà Nội",
+    openingHours: "8:00 - 18:00",
+    ticketPrice: "30.000 VNĐ",
+    rating: 4.8,
+    coordinates: { lat: 21.0293, lng: 105.8359 }
+  },
+
+  // Thêm địa điểm cho Hồ Chí Minh
+  {
+    id: 34,
+    provinceId: 2,
+    name: "Phố đi bộ Nguyễn Huệ",
+    slug: "pho-di-bo-nguyen-hue",
+    imageUrl: "/images/attractions/pho-di-bo-nguyen-hue.jpg",
+    description: "Không gian công cộng sôi động với nhiều hoạt động văn hóa, giải trí.",
+    address: "Đường Nguyễn Huệ, Quận 1, TP.HCM",
+    openingHours: "18:00 - 22:00",
+    ticketPrice: "Miễn phí",
+    rating: 4.5,
+    coordinates: { lat: 10.7731, lng: 106.7029 }
+  },
+  {
+    id: 35,
+    provinceId: 2,
+    name: "Chợ Bến Thành",
+    slug: "cho-ben-thanh",
+    imageUrl: "/images/attractions/cho-ben-thanh.jpg",
+    description: "Khu chợ truyền thống nổi tiếng với nhiều mặt hàng đa dạng.",
+    address: "Đường Lê Lợi, Quận 1, TP.HCM",
+    openingHours: "6:00 - 24:00",
+    ticketPrice: "Miễn phí",
+    rating: 4.4,
+    coordinates: { lat: 10.7724, lng: 106.6980 }
+  },
+  {
+    id: 36,
+    provinceId: 2,
+    name: "Bảo tàng Chứng tích Chiến tranh",
+    slug: "bao-tang-chung-tich-chien-tranh",
+    imageUrl: "/images/attractions/bao-tang-chung-tich-chien-tranh.jpg",
+    description: "Bảo tàng trưng bày về lịch sử chiến tranh Việt Nam.",
+    address: "28 Võ Văn Tần, Quận 3, TP.HCM",
+    openingHours: "7:30 - 18:00",
+    ticketPrice: "40.000 VNĐ",
+    rating: 4.7,
+    coordinates: { lat: 10.7798, lng: 106.6925 }
+  },
+
+  // Thêm địa điểm cho Đà Nẵng
+  {
+    id: 37,
+    provinceId: 3,
+    name: "Cầu Rồng",
+    slug: "cau-rong",
+    imageUrl: "/images/attractions/cau-rong.jpg",
+    description: "Cây cầu biểu tượng của Đà Nẵng với hình dáng con rồng phun lửa và nước.",
+    address: "Phường An Hải Tây, Quận Sơn Trà, Đà Nẵng",
+    openingHours: "Cả ngày",
+    ticketPrice: "Miễn phí",
+    rating: 4.8,
+    coordinates: { lat: 16.0611, lng: 108.2272 }
+  },
+  {
+    id: 38,
+    provinceId: 3,
+    name: "Asia Park",
+    slug: "asia-park",
+    imageUrl: "/images/attractions/asia-park.jpg",
+    description: "Công viên giải trí hiện đại với nhiều trò chơi hấp dẫn.",
+    address: "1 Phan Đăng Lưu, Hải Châu, Đà Nẵng",
+    openingHours: "15:00 - 22:00",
+    ticketPrice: "200.000 VNĐ",
+    rating: 4.5,
+    coordinates: { lat: 16.0469, lng: 108.2237 }
+  },
+  {
+    id: 39,
+    provinceId: 3,
+    name: "Làng Bích Họa Tam Thanh",
+    slug: "lang-bich-hoa-tam-thanh",
+    imageUrl: "/images/attractions/lang-bich-hoa-tam-thanh.jpg",
+    description: "Làng quê với những bức tranh tường nghệ thuật độc đáo.",
+    address: "Tam Thanh, Tam Kỳ, Quảng Nam",
+    openingHours: "Cả ngày",
+    ticketPrice: "Miễn phí",
+    rating: 4.6,
+    coordinates: { lat: 15.5738, lng: 108.4837 }
+  },
+
+  // Thêm địa điểm cho Hạ Long
+  {
+    id: 40,
+    provinceId: 8,
+    name: "Bãi Cháy",
+    slug: "bai-chay",
+    imageUrl: "/images/attractions/bai-chay.jpg",
+    description: "Bãi biển nhân tạo đẹp với nhiều dịch vụ giải trí.",
+    address: "Phường Bãi Cháy, TP. Hạ Long, Quảng Ninh",
+    openingHours: "Cả ngày",
+    ticketPrice: "Miễn phí",
+    rating: 4.4,
+    coordinates: { lat: 20.9584, lng: 107.0720 }
+  },
+  {
+    id: 41,
+    provinceId: 8,
+    name: "Công viên Sun World",
+    slug: "cong-vien-sun-world-ha-long",
+    imageUrl: "/images/attractions/sun-world-ha-long.jpg",
+    description: "Khu vui chơi giải trí hiện đại với nhiều trò chơi thú vị.",
+    address: "Bãi Cháy, TP. Hạ Long, Quảng Ninh",
+    openingHours: "8:00 - 21:30",
+    ticketPrice: "700.000 VNĐ",
+    rating: 4.6,
+    coordinates: { lat: 20.9589, lng: 107.0759 }
+  },
+  {
+    id: 42,
+    provinceId: 8,
+    name: "Bảo tàng Quảng Ninh",
+    slug: "bao-tang-quang-ninh",
+    imageUrl: "/images/attractions/bao-tang-quang-ninh.jpg",
+    description: "Bảo tàng hiện đại giới thiệu về lịch sử và văn hóa Quảng Ninh.",
+    address: "Trần Quốc Nghiễn, TP. Hạ Long, Quảng Ninh",
+    openingHours: "8:00 - 17:00",
+    ticketPrice: "40.000 VNĐ",
+    rating: 4.5,
+    coordinates: { lat: 20.9508, lng: 107.0997 }
   }
 ]
 

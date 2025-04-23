@@ -38,11 +38,19 @@ export function AITravelAssistant() {
     scrollToBottom()
   }, [messages])
 
+  const generateMessageId = () => {
+    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  }
+
   const handleSend = async (message: string) => {
     if (!message.trim()) return
 
+    const userMessageId = generateMessageId()
+    const aiMessageId = generateMessageId()
+
     try {
-      setMessages((prev) => [...prev, { content: message, isUser: true }])
+      setMessages((prev) => [...prev, { id: userMessageId, content: message, isUser: true }])
+      setInput("")
       setIsLoading(true)
 
       const response = await fetch("/api/ai/travel-assistant", {
@@ -66,10 +74,16 @@ export function AITravelAssistant() {
         throw new Error("Không nhận được phản hồi từ AI")
       }
 
-      setMessages((prev) => [...prev, { content: data.reply, isUser: false }])
+      setMessages((prev) => [...prev, { id: aiMessageId, content: data.reply, isUser: false }])
     } catch (error: any) {
       console.error("Lỗi khi gửi tin nhắn:", error)
-      toast.error(error.message || "Không thể kết nối với trợ lý AI")
+      toast({
+        title: "Lỗi",
+        description: error.message || "Không thể kết nối với trợ lý AI",
+        variant: "destructive",
+      })
+      // Remove the user message if there was an error
+      setMessages((prev) => prev.filter((msg) => msg.id !== userMessageId))
     } finally {
       setIsLoading(false)
     }
