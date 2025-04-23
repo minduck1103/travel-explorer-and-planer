@@ -7,7 +7,7 @@ export function HeroSection() {
       <div
         className="absolute inset-0 z-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('/placeholder.svg?height=1080&width=1920')",
+          backgroundImage: "url('/images/banner-landing.jpg')",
           filter: "brightness(0.7)",
         }}
       />
@@ -17,7 +17,7 @@ export function HeroSection() {
           Hành trình khám phá những địa điểm du lịch tuyệt vời nhất tại Việt Nam
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild size="lg" className="bg-rose-600 hover:bg-rose-700">
+          <Button asChild size="lg" className="bg-aqua-600 hover:bg-aqua-700">
             <Link href="/provinces">Khám phá ngay</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="bg-white/10 text-white border-white hover:bg-white/20">
