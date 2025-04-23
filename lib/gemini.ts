@@ -1,7 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { toast } from "sonner"
 
 // Khởi tạo Gemini client
-let gemini: GoogleGenerativeAI | null = null
+let genAI: GoogleGenerativeAI | null = null
 
 // Kiểm tra xem đang chạy ở phía server hay không
 const isServer = typeof window === "undefined"
@@ -11,27 +12,43 @@ if (isServer) {
     const apiKey = process.env.GEMINI_API_KEY
 
     if (!apiKey) {
-      console.error("GEMINI_API_KEY không được cấu hình. Vui lòng thêm GEMINI_API_KEY vào file .env")
-      throw new Error("GEMINI_API_KEY không được cấu hình")
+      const error = "Chưa cấu hình GEMINI_API_KEY. Vui lòng kiểm tra file .env"
+      console.error("❌", error)
+      throw new Error(error)
     }
 
-    gemini = new GoogleGenerativeAI(apiKey)
-    console.log("Gemini client đã được khởi tạo thành công.")
+    genAI = new GoogleGenerativeAI(apiKey)
+    console.log("✅ Đã khởi tạo Gemini client thành công")
   } catch (error) {
-    console.error("Lỗi khi khởi tạo Gemini client:", error)
-    throw error
+    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    console.error("❌ Lỗi khởi tạo Gemini client:", errorMessage)
+
+    if (error instanceof Error) {
+      if (error.message.includes("API key")) {
+        toast.error("API key không hợp lệ hoặc hết hạn")
+      } else {
+        toast.error(`Lỗi Gemini: ${error.message}`)
+      }
+    } else {
+      toast.error("Lỗi không xác định khi khởi tạo Gemini")
+    }
   }
 }
 
-export default gemini
+export default genAI
 
 // Hàm kiểm tra xem Gemini client có sẵn sàng không
 export function isGeminiAvailable(): boolean {
-  return !!gemini
+  return !!genAI
 }
 
 // Hàm tạo chat model
 export function getChatModel() {
-  if (!gemini) return null
-  return gemini.getGenerativeModel({ model: "gemini-pro" })
+  if (!genAI) return null
+  return genAI.getGenerativeModel({ model: "gemini-pro" })
+}
+
+// Hàm tạo mô tả dự phòng khi API không khả dụng
+export function generateFallbackDescription(): string {
+  return "Đây là một địa điểm du lịch tuyệt vời ở Việt Nam. Hãy đến và khám phá!"
 } 
