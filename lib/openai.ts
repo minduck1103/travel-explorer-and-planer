@@ -1,4 +1,5 @@
 import OpenAI from "openai"
+import { toast } from "sonner"
 
 // Khởi tạo OpenAI client
 let openai: OpenAI | null = null
@@ -11,17 +12,45 @@ if (isServer) {
     const apiKey = process.env.OPENAI_API_KEY
 
     if (!apiKey) {
-      console.warn("OPENAI_API_KEY không được cấu hình. Một số tính năng AI sẽ không hoạt động.")
-    } else {
-      openai = new OpenAI({
-        apiKey: apiKey,
-        timeout: 30000, // Tăng timeout lên 30 giây
-        maxRetries: 2, // Thử lại tối đa 2 lần
-      })
-      console.log("OpenAI client đã được khởi tạo thành công.")
+      const error = "Chưa cấu hình OPENAI_API_KEY. Vui lòng kiểm tra file .env"
+      console.error(error)
+      throw new Error(error)
     }
+
+    openai = new OpenAI({
+      apiKey: apiKey,
+      timeout: 15000, // Giảm timeout xuống 15 giây
+      maxRetries: 3, // Tăng số lần thử lại
+      defaultHeaders: {
+        "User-Agent": "TravelApp/1.0.0"
+      },
+      defaultQuery: {
+        "api-version": "2024-02"
+      }
+    })
+
+    console.log("✅ Đã khởi tạo OpenAI client thành công")
   } catch (error) {
-    console.error("Lỗi khi khởi tạo OpenAI client:", error)
+    const errorMessage = error instanceof Error ? error.message : "Lỗi không xác định"
+    console.error("❌ Lỗi khởi tạo OpenAI client:", errorMessage)
+    
+    if (error instanceof OpenAI.APIError) {
+      switch (error.status) {
+        case 401:
+          toast.error("API key không hợp lệ. Vui lòng kiểm tra lại")
+          break
+        case 429:
+          toast.error("Đã vượt quá giới hạn request. Vui lòng thử lại sau")
+          break
+        case 500:
+          toast.error("Lỗi server OpenAI. Vui lòng thử lại sau")
+          break
+        default:
+          toast.error(`Lỗi OpenAI: ${error.message}`)
+      }
+    }
+    
+    throw error
   }
 }
 

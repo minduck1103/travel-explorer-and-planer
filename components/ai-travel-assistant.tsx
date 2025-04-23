@@ -38,51 +38,38 @@ export function AITravelAssistant() {
     scrollToBottom()
   }, [messages])
 
-  const handleSend = async () => {
-    if (!input.trim()) return
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: input,
-      isUser: true,
-    }
-
-    setMessages((prev) => [...prev, userMessage])
-    setInput("")
-    setIsLoading(true)
+  const handleSend = async (message: string) => {
+    if (!message.trim()) return
 
     try {
+      setMessages((prev) => [...prev, { content: message, isUser: true }])
+      setIsLoading(true)
+
       const response = await fetch("/api/ai/travel-assistant", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: input,
+          message,
           chatHistory: messages,
         }),
       })
 
-      if (!response.ok) {
-        throw new Error("Không thể kết nối với trợ lý AI")
-      }
-
       const data = await response.json()
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: data.reply,
-        isUser: false,
+      if (!response.ok) {
+        throw new Error(data.error || "Không thể kết nối với trợ lý AI")
       }
 
-      setMessages((prev) => [...prev, assistantMessage])
-    } catch (error) {
+      if (!data.reply) {
+        throw new Error("Không nhận được phản hồi từ AI")
+      }
+
+      setMessages((prev) => [...prev, { content: data.reply, isUser: false }])
+    } catch (error: any) {
       console.error("Lỗi khi gửi tin nhắn:", error)
-      toast({
-        title: "Đã xảy ra lỗi",
-        description: "Không thể kết nối với trợ lý AI. Vui lòng thử lại sau.",
-        variant: "destructive",
-      })
+      toast.error(error.message || "Không thể kết nối với trợ lý AI")
     } finally {
       setIsLoading(false)
     }
@@ -91,7 +78,7 @@ export function AITravelAssistant() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      handleSend()
+      handleSend(input)
     }
   }
 
@@ -146,7 +133,7 @@ export function AITravelAssistant() {
             disabled={isLoading}
             className="flex-grow"
           />
-          <Button onClick={handleSend} disabled={isLoading || !input.trim()}>
+          <Button onClick={() => handleSend(input)} disabled={isLoading || !input.trim()}>
             {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
         </div>

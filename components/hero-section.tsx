@@ -16,8 +16,8 @@ export function HeroSection() {
         <p className="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto">
           Hành trình khám phá những địa điểm du lịch tuyệt vời nhất tại Việt Nam
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild size="lg" className="bg-aqua-600 hover:bg-aqua-700">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-5 pt-20">
+          <Button asChild size="lg" className="bg-rose-600 hover:bg-rose-700">
             <Link href="/provinces">Khám phá ngay</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="bg-white/10 text-white border-white hover:bg-white/20">
