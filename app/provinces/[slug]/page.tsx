@@ -8,7 +8,13 @@ interface ProvincePageProps {
   }
 }
 
-export default function ProvincePage({ params }: ProvincePageProps) {
+export async function generateStaticParams() {
+  return provinces.map((province) => ({
+    slug: province.slug,
+  }))
+}
+
+export default async function ProvincePage({ params }: ProvincePageProps) {
   const province = provinces.find((p) => p.slug === params.slug)
 
   if (!province) {
