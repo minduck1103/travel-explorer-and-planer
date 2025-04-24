@@ -49,13 +49,13 @@ export async function POST(request: NextRequest) {
 
     // Chuẩn bị prompt cho AI
     const systemPrompt = `Bạn là trợ lý du lịch thông minh cho Việt Nam. Bạn có kiến thức về các tỉnh thành và địa điểm du lịch sau:
-    
-    Tỉnh thành: ${JSON.stringify(provincesData)}
-    
-    Địa điểm du lịch: ${JSON.stringify(attractionsData)}
-    
-    Hãy trả lời các câu hỏi về du lịch Việt Nam một cách thân thiện, hữu ích và chính xác. 
-    Nếu được hỏi về địa điểm không có trong dữ liệu, hãy đề xuất các địa điểm tương tự từ dữ liệu có sẵn.
+      
+      Tỉnh thành: ${JSON.stringify(provincesData)}
+      
+      Địa điểm du lịch: ${JSON.stringify(attractionsData)}
+      
+      Hãy trả lời các câu hỏi về du lịch Việt Nam một cách thân thiện, hữu ích và chính xác. 
+      Nếu được hỏi về địa điểm không có trong dữ liệu, hãy đề xuất các địa điểm tương tự từ dữ liệu có sẵn.
     Trả lời bằng tiếng Việt, ngắn gọn và hữu ích.`
 
     console.log("Đang gửi yêu cầu đến Gemini API...")
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         ],
         generationConfig: {
           maxOutputTokens: 1000,
-          temperature: 0.7,
+        temperature: 0.7,
         },
       })
 

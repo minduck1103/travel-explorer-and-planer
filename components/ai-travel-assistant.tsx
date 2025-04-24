@@ -50,8 +50,8 @@ export function AITravelAssistant() {
 
     try {
       setMessages((prev) => [...prev, { id: userMessageId, content: message, isUser: true }])
-      setInput("")
-      setIsLoading(true)
+    setInput("")
+    setIsLoading(true)
 
       const response = await fetch("/api/ai/travel-assistant", {
         method: "POST",

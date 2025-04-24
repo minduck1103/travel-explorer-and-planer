@@ -1,90 +1,202 @@
-import { NextResponse } from "next/server"
-import genAI from "@/lib/gemini"
-import { attractions } from "@/lib/data"
+import { type NextRequest, NextResponse } from "next/server"
+import openai from "@/lib/openai"
+import { attractions, provinces } from "@/lib/data"
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { selectedAttractions, days } = await req.json()
+    const { provinceId, days, preferences, travelStyle } = await request.json()
 
-    if (!selectedAttractions || !days) {
-      return NextResponse.json(
-        { error: "Vui lòng chọn địa điểm và số ngày" },
-        { status: 400 }
-      )
+    if (!provinceId || !days) {
+      return NextResponse.json({ error: "Thiếu thông tin cần thiết" }, { status: 400 })
     }
 
-    // Kiểm tra Gemini client
-    if (!genAI) {
-      console.error("Gemini client không khởi tạo được")
-      return NextResponse.json(
-        { error: "Lỗi kết nối AI service" },
-        { status: 500 }
-      )
+    // Lấy thông tin tỉnh
+    const province = provinces.find((p) => p.id === provinceId)
+    if (!province) {
+      return NextResponse.json({ error: "Không tìm thấy tỉnh" }, { status: 404 })
     }
 
-    // Lấy thông tin chi tiết của các địa điểm được chọn
-    const attractionsData = selectedAttractions.map((id: string) => {
-      const attraction = attractions.find(a => a.id === id)
-      if (!attraction) return null
-      return {
-        id: attraction.id,
-        name: attraction.name,
-        description: attraction.description,
-        categories: attraction.categories,
-        rating: attraction.rating
+    // Lấy các địa điểm trong tỉnh
+    const provinceAttractions = attractions.filter((a) => a.provinceId === provinceId)
+
+    // Kiểm tra OpenAI client
+    if (!openai) {
+      console.error("OpenAI client không khởi tạo được")
+
+      // Tạo lịch trình cơ bản nếu không có AI
+      const basicItinerary = {
+        title: `Lịch trình ${days} ngày tại ${province.name}`,
+        overview: `Khám phá những địa điểm nổi bật nhất tại ${province.name} trong ${days} ngày.`,
+        days: Array.from({ length: days }, (_, i) => {
+          const dayAttractions = provinceAttractions.sort(() => 0.5 - Math.random()).slice(0, 2)
+
+          return {
+            day: i + 1,
+            title: `Ngày ${i + 1}: Khám phá ${province.name}`,
+            activities: [
+              {
+                time: "Buổi sáng",
+                description: `Tham quan ${dayAttractions[0]?.name || "các địa điểm du lịch"}`,
+                attractions: dayAttractions[0] ? [{ id: dayAttractions[0].id, name: dayAttractions[0].name }] : [],
+              },
+              {
+                time: "Buổi trưa",
+                description: "Nghỉ ngơi và thưởng thức ẩm thực địa phương",
+                attractions: [],
+              },
+              {
+                time: "Buổi chiều",
+                description: `Tham quan ${dayAttractions[1]?.name || "các địa điểm du lịch"}`,
+                attractions: dayAttractions[1] ? [{ id: dayAttractions[1].id, name: dayAttractions[1].name }] : [],
+              },
+              {
+                time: "Buổi tối",
+                description: "Khám phá ẩm thực và đời sống về đêm",
+                attractions: [],
+              },
+            ],
+          }
+        }),
+        tips: [
+          "Nên mang theo nước uống khi đi tham quan",
+          "Kiểm tra thời tiết trước khi đi",
+          "Mang theo tiền mặt để mua sắm tại các chợ địa phương",
+        ],
       }
-    }).filter(Boolean)
+
+      return NextResponse.json({ itinerary: basicItinerary })
+    }
+
+    // Chuẩn bị dữ liệu cho AI
+    const attractionsData = provinceAttractions.map((a) => ({
+      id: a.id,
+      name: a.name,
+      description: a.description,
+      address: a.address,
+      openingHours: a.openingHours,
+      ticketPrice: a.ticketPrice,
+      rating: a.rating,
+    }))
 
     const prompt = `
-    Bạn là một chuyên gia lập lịch trình du lịch. Hãy giúp tôi lập lịch trình ${days} ngày cho các địa điểm sau:
-
-    ${JSON.stringify(attractionsData, null, 2)}
-
-    Yêu cầu:
-    1. Sắp xếp các địa điểm hợp lý theo ngày
-    2. Mỗi ngày nên có 2-3 địa điểm
-    3. Tính toán thời gian di chuyển và tham quan hợp lý
-    4. Đề xuất các hoạt động cụ thể tại mỗi điểm
-
-    Trả về kết quả theo format JSON:
+    Hãy tạo một lịch trình du lịch ${days} ngày tại ${province.name} cho một du khách với sở thích: "${preferences || "Khám phá văn hóa và thiên nhiên"}" 
+    và phong cách du lịch: "${travelStyle || "Cân bằng giữa tham quan và nghỉ ngơi"}".
+    
+    Sử dụng các địa điểm du lịch sau:
+    ${JSON.stringify(attractionsData)}
+    
+    Lịch trình nên bao gồm:
+    1. Kế hoạch chi tiết cho mỗi ngày (buổi sáng, trưa, chiều, tối)
+    2. Các địa điểm tham quan từ danh sách trên
+    3. Đề xuất về ăn uống, di chuyển
+    4. Lời khuyên hữu ích cho du khách
+    
+    Trả về kết quả dưới dạng JSON với định dạng:
     {
-      "itinerary": [
+      "title": "Tiêu đề lịch trình",
+      "overview": "Tổng quan ngắn gọn về lịch trình",
+      "days": [
         {
           "day": 1,
+          "title": "Tiêu đề ngày 1",
           "activities": [
             {
-              "time": "8:00",
-              "attractionId": "id1",
-              "duration": "2 giờ",
-              "description": "Mô tả hoạt động"
+              "time": "Buổi sáng",
+              "description": "Mô tả hoạt động buổi sáng",
+              "attractions": [{"id": 1, "name": "Tên địa điểm"}]
+            },
+            {
+              "time": "Buổi trưa",
+              "description": "Mô tả hoạt động buổi trưa",
+              "attractions": []
+            },
+            {
+              "time": "Buổi chiều",
+              "description": "Mô tả hoạt động buổi chiều",
+              "attractions": [{"id": 2, "name": "Tên địa điểm"}]
+            },
+            {
+              "time": "Buổi tối",
+              "description": "Mô tả hoạt động buổi tối",
+              "attractions": []
             }
           ]
         }
-      ]
+      ],
+      "tips": ["Lời khuyên 1", "Lời khuyên 2"]
     }
     `
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" })
-    const result = await model.generateContent(prompt)
-    const response = await result.response
-    const text = response.text()
-
     try {
-      const data = JSON.parse(text)
-      return NextResponse.json(data)
-    } catch (error) {
-      console.error("Lỗi parse kết quả từ AI:", error)
-      return NextResponse.json(
-        { error: "Lỗi xử lý kết quả" },
-        { status: 500 }
-      )
-    }
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Bạn là một chuyên gia lập kế hoạch du lịch Việt Nam. Bạn tạo ra các lịch trình du lịch chi tiết, thực tế và hấp dẫn.",
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.7,
+      })
 
+      const content = response.choices[0].message.content
+      const itinerary = JSON.parse(content || "{}")
+
+      return NextResponse.json({ itinerary })
+    } catch (apiError) {
+      console.error("Lỗi OpenAI API:", apiError)
+
+      // Tạo lịch trình cơ bản nếu có lỗi
+      const basicItinerary = {
+        title: `Lịch trình ${days} ngày tại ${province.name}`,
+        overview: `Khám phá những địa điểm nổi bật nhất tại ${province.name} trong ${days} ngày.`,
+        days: Array.from({ length: days }, (_, i) => {
+          const dayAttractions = provinceAttractions.sort(() => 0.5 - Math.random()).slice(0, 2)
+
+          return {
+            day: i + 1,
+            title: `Ngày ${i + 1}: Khám phá ${province.name}`,
+            activities: [
+              {
+                time: "Buổi sáng",
+                description: `Tham quan ${dayAttractions[0]?.name || "các địa điểm du lịch"}`,
+                attractions: dayAttractions[0] ? [{ id: dayAttractions[0].id, name: dayAttractions[0].name }] : [],
+              },
+              {
+                time: "Buổi trưa",
+                description: "Nghỉ ngơi và thưởng thức ẩm thực địa phương",
+                attractions: [],
+              },
+              {
+                time: "Buổi chiều",
+                description: `Tham quan ${dayAttractions[1]?.name || "các địa điểm du lịch"}`,
+                attractions: dayAttractions[1] ? [{ id: dayAttractions[1].id, name: dayAttractions[1].name }] : [],
+              },
+              {
+                time: "Buổi tối",
+                description: "Khám phá ẩm thực và đời sống về đêm",
+                attractions: [],
+              },
+            ],
+          }
+        }),
+        tips: [
+          "Nên mang theo nước uống khi đi tham quan",
+          "Kiểm tra thời tiết trước khi đi",
+          "Mang theo tiền mặt để mua sắm tại các chợ địa phương",
+        ],
+      }
+
+      return NextResponse.json({ itinerary: basicItinerary })
+    }
   } catch (error) {
-    console.error("Lỗi API:", error)
-    return NextResponse.json(
-      { error: "Lỗi server" },
-      { status: 500 }
-    )
+    console.error("Lỗi khi tạo lịch trình:", error)
+    return NextResponse.json({ error: "Đã xảy ra lỗi khi tạo lịch trình" }, { status: 500 })
   }
 }

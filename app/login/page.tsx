@@ -97,9 +97,9 @@ export default function LoginPage() {
                 <Button variant="link" className="h-auto p-0" asChild>
                   <Link href="/register" className="font-semibold text-primary hover:underline">
                     Đăng ký ngay
-                  </Link>
+              </Link>
                 </Button>
-              </p>
+            </p>
             </div>
           </CardFooter>
         </form>

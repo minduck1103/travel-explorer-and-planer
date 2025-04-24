@@ -98,7 +98,7 @@ export default function Navbar() {
               <Link href="/login">
                 <User className="h-5 w-5" />
               </Link>
-            </Button>
+              </Button>
           )}
 
           <Button variant="ghost" className="md:hidden" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
